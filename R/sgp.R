@@ -110,7 +110,7 @@
 #'
 sgp <- function(X, y, group = 1:ncol(X), penalty = c("sgl", "sgs", "sgm", "sge"), alpha = 1/3, type = c("linear", "logit"), Z = NULL,
                 nlambda = 100, lambda.min = {if(nrow(X) > ncol(X)) 1e-4 else .05}, log.lambda = TRUE, lambdas,
-                prec = 1e-4, ada_mult = 2, max.iter = 10000, standardize = TRUE,
+                prec = 1e-4, ada_mult = 2, max.iter = 10000, standardize = TRUE, intercept = TRUE,
                 vargamma = ifelse(pvar == "scad"|penalty == "sgs", 4, 3), grgamma = ifelse(pgr == "scad"|penalty == "sgs", 4, 3), vartau = 1, grtau = 1,
                 pvar = c("lasso", "scad", "mcp", "exp"), pgr = c("lasso", "scad", "mcp", "exp"),
                 group.weight = rep(1, length(unique(group))), returnX = FALSE, ...) {
@@ -154,6 +154,11 @@ sgp <- function(X, y, group = 1:ncol(X), penalty = c("sgl", "sgs", "sgm", "sge")
     Z_groups <- c(rep(0, ifelse(is.null(covariates), 0, ncol(covariates))), grouping)
   }
 
+  if (!standardize) {
+    dat <- list(X = X,
+                vars = predictors$vars)
+  }
+                  
   p <- ncol(dat$X)
 
   # Setup lambdas
@@ -216,8 +221,14 @@ sgp <- function(X, y, group = 1:ncol(X), penalty = c("sgl", "sgs", "sgm", "sge")
     beta[-1, ] <- b[-1, ] / dat$scale
     beta[1, ] <- b[1, ] - dat$center %*% beta[-1, , drop = FALSE]
   }
+                   
   # Labeling
-  varnames <- c("Intercept", dat$vars)
+  if (intercept) { 
+    varnames <- c("Intercept", dat$vars)
+  } else {
+    varnames <-  dat$vars
+  }
+  
 
   dimnames(beta) <- list(varnames, round(lambdas, digits = 4))
 
