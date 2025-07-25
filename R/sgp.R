@@ -220,6 +220,8 @@ sgp <- function(X, y, group = 1:ncol(X), penalty = c("sgl", "sgs", "sgm", "sge")
     beta <- matrix(0, nrow = 1 + p, ncol = ncol(b))
     beta[-1, ] <- b[-1, ] / dat$scale
     beta[1, ] <- b[1, ] - dat$center %*% beta[-1, , drop = FALSE]
+  } else {
+    beta <- b
   }
                    
   # Labeling
