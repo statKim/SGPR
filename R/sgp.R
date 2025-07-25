@@ -232,7 +232,7 @@ sgp <- function(X, y, group = 1:ncol(X), penalty = c("sgl", "sgs", "sgm", "sge")
   }
   
 
-  dimnames(beta) <- list(varnames, round(lambdas, digits = 4))
+  #dimnames(beta) <- list(varnames, round(lambdas, digits = 4))
 
   res <- structure(list(beta = beta,
                         type = type,
